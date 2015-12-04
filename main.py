@@ -1,5 +1,6 @@
 from xml.dom.minidom import parse
 import matrixops
+import sys
 
 def getEdge(value):
     return int(value.value) - 1
@@ -8,7 +9,10 @@ def calcResistance(a, b):
     return 1.0*(a*b)/(a+b)
 
 
-input = parse("input.xml")
+input = parse(sys.argv[1])
+output = open((sys.argv[2]), 'w')
+
+
 weights = []
 
 ids = input.getElementsByTagName('net')
@@ -47,4 +51,10 @@ for diod in diods:
     weights[getEdge(diod.attributes['net_to'])][getEdge(diod.attributes['net_from'])] = reversed_valueToAssign
 
 result = matrixops.applyFloydWarshal(weights)
-print(result)
+
+for row in result:
+	for item in row:
+		output.write(str('{0:.7f}'.format(item))+',')
+	output.write('\n')
+
+output.close()
